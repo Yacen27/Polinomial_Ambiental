@@ -56,6 +56,13 @@ model = sm.OLS(y, x).fit()
 print(model.summary())
 
 
+############### Corrección variables x y ###########################
+columnas_eliminadas = ["cnt","weathersit_Heavy Rain","windspeed","weathersit_Mist"]
+x = df_SD_D.drop(columns= columnas_eliminadas).values
+y = df_SD_D["cnt"].values
+
+
+
 ##### Dividir el conjunto de datos en entrenamiento y testing ##########
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 77)
@@ -77,5 +84,76 @@ print("RMSE: %.2f" % mean_squared_error(y_test, y_pred, squared=False))
 print("MAE: %.2f" % mean_absolute_error(y_test, y_pred))
 print('R²: %.2f' % r2_score(y_test, y_pred))
 
+######### ¿Como se si el RMSE es bajo o no? #############
+
+media_y = y.mean()
+rmse_porcentaje = ( mean_squared_error(y_test, y_pred, squared=False)/ media_y) * 100
+mae_porcentaje = ( mean_absolute_error(y_test, y_pred)/ media_y) * 100
+
+print(f"🔹 RMSE como % de la media de y: {rmse_porcentaje:.2f}%")
+print(f"🔹 MAE como % de la media de y: {mae_porcentaje:.2f}%")
+
+####### Al tener tanto un % MAE como un %RMSE superiores al 20%, se concluye que el modelo tiene una mala capcidad productiva (Modelo con errores altos)
 # Ahora veremos los coeficientes del modelo
 print(list(zip(df_SD_D.columns, regressor.coef_)))
+
+
+
+############ ¿Cual grado es el mejor modelo? CREACION DE LA GRILLA ###############
+
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 77)
+
+polynomial_regression = make_pipeline(
+    PolynomialFeatures(),
+    LinearRegression()
+    )
+############### CREACIÓN GRILLA ##################
+
+param_grid = {"polynomialfeatures__degree" : [1,2,3]} #### Grados a los que va a elevar el modelo
+
+from sklearn.model_selection import KFold, GridSearchCV
+
+kfold = KFold(n_splits = 10, shuffle=True, random_state= 77)
+
+modelos_grid = GridSearchCV(polynomial_regression, param_grid, cv=kfold, n_jobs=1, scoring = "neg_root_mean_squared_error") 
+
+modelos_grid.fit(x_train, y_train)
+
+mejor_grado = modelos_grid.best_params_
+print(mejor_grado)
+
+############ El mejor modelo es el de grado 3 ################
+
+############ metricas de evaluacion mejor modelo ###############
+
+mejor_modelo = modelos_grid.best_estimator_
+
+############ predicciones mejor modelo #########################
+
+y_pred = mejor_modelo.predict(x_test)
+y_pred_train = mejor_modelo.predict(x_train)
+
+########### metricas mejor modelo #################################
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+# RMSE (Error cuadrático medio raíz)
+rmse_test = mean_squared_error(y_test, y_pred, squared=False)
+
+
+# MAE (Error absoluto medio)
+mae_test = mean_absolute_error(y_test, y_pred)
+
+
+# R² (Coeficiente de determinación)
+r2_test = r2_score(y_test, y_pred)
+
+
+# Mostrar resultados
+print(f"Mejor grado del polinomio: {modelos_grid.best_params_['polynomialfeatures__degree']}\n")
+print(f"🔹 RMSE en test: {rmse_test:.4f}")
+print(f"🔹 MAE en test: {mae_test:.4f}")
+print(f"🔹 R² en test: {r2_test:.4f}")
