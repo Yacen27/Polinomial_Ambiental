@@ -1,8 +1,8 @@
 Justificación taller Git_Hub
 1) Análisis de la base de datos.
 Según la descripción proporcionada en los anexos de la base de datos, la composición de la base de datos es la siguiente:
-*Existen 3 variables categóricas: 1.Season 2.Clima 3.Time_of_day
-*Existen 6 variables numéricas: 1.Weekday 2.Temp 3.Atemp 4.Hum 5.Windspeed 6.Cnt
+* Existen 3 variables categóricas: 1.Season 2.Clima 3.Time_of_day
+* Existen 6 variables numéricas: 1.Weekday 2.Temp 3.Atemp 4.Hum 5.Windspeed 6.Cnt
 
 
 La descripción de cada variable es la siguiente:
