@@ -1,5 +1,5 @@
-Justificación taller Git_Hub
-1) Análisis de la base de datos.
+# Justificación taller Git_Hub
+### Análisis de la base de datos
 Según la descripción proporcionada en los anexos de la base de datos, la composición de la base de datos es la siguiente:
 * Existen 3 variables categóricas: 1.Season 2.Clima 3.Time_of_day
 * Existen 6 variables numéricas: 1.Weekday 2.Temp 3.Atemp 4.Hum 5.Windspeed 6.Cnt
@@ -23,18 +23,18 @@ La descripción de cada variable es la siguiente:
 Una vez realizados estos pasos, se concluye con el paso de exploración y perfilamiento de los datos, junto con la limpieza y preparación de los mismos.
 
 
-Creación del primer modelo polinomial de orden 1:
+## Creación del primer modelo polinomial de orden 1:
 
 Una vez se concluyó la parte de exploración y perfilamiento de datos, se busca terminar de preparar los datos para poder hacer la estimación del modelo de regresión múltiple. Para esto, es necesario dumificar las variables categóricas con el objetivo de que el modelo pueda estimar su relación con la variable independiente de manera correcta. Con el objetivo de corregir el problema de multicolinealidad generado al dumificar estas variables, se opta por eliminar una categoría específica de cada variable, las variables dumificadas y la categoría de referencia se muestran a continuación:
 
-Variables que se van a dumificar:
+### Variables que se van a dumificar:
 * Season: Categoría de referencia (Fall)
 * Wheatersit: Categoría de referencia (Clear)
 * Time_of_day: Categoría de referencia (Evening)
 
 Una vez dumificadas las variables, se procede a estimar el modelo de regresión polinomial de orden 1 por el método de mínimos cuadrados ordinarios o OLS por sus siglas en inglés, los resultados de este modelo muestran un valor de r2 de tan solo 0.43, lo que quiere decir que las variables independientes solamente explican un 43% de la variabilidad de la demanda de bicicletas. Adicionalmente, los p_valores muestran que existen variables que no son relevantes al momento de explicar la demanda de bicicletas. Con p_valores de 0.958 , 0.114 , 0.127 las variables Heavy_Rain , Windspeed y Mist son completamente irrelevantes al momento de explicar la demanda de bicicletas, por esta razón, para el modelo posterior de machine learning se opta por eliminar estas variables.
 
-Variables eliminadas:
+### Variables eliminadas:
 * Weather_Heavy_Rain
 * Windspeed
 * Weather_Mist
@@ -48,3 +48,10 @@ Como se puede observar, las variables independientes del modelo son capaces de e
 
 * RMSE % Media: 73.65%
 * MAE % Media: 54.62%
+
+Sin embargo es necesario probar estimar los modelos de regresión polinomiales elevando los estimadores del modelo a los grados 2 y 3. Para establecer cuál es el grado óptimo que presenta mejores resultados, se creó una grilla, la cual va a evaluar el mismo modelo utilizando los grados 1, 2 y 3.
+La grilla muestra que el modelo con resultados más óptimos es el modelo elevado al grado 3 el cual muestra los siguientes resultados:
+* R2: 0.4699
+* RMSE: 133.4866
+* MAE: 97.4488
+
